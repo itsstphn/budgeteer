@@ -1,10 +1,14 @@
+import ItemTable from "@/components/ItemTable";
+import Button from "@/components/ui/Button";
 import Image from "next/image";
 
 export default function Home() {
   return (
     <main className="container flex flex-row p-5 gap-7">
       <section className="w-[20%] max-h-full bg-primary p-5">
-        Still thinking what to put in this section
+        <p className="text-slate-600">
+          Still thinking what to put in this section
+        </p>
       </section>
       <section className="flex-auto  min-h-10">
         <div className="flex flex-row gap-5">
@@ -41,30 +45,8 @@ export default function Home() {
         </div>
 
         <div className="flex w-full bg-slate-400 mt-5 p-5">
-          <div className="flex-1 w-full p-2 flex flex-col items-center">
-            <p className="mb-3">Funds</p>
-            <div className="w-full flex gap-2 flex-col items-center p-4 border-2 border-slate-900 min-h-[400px]">
-              <div className="flex w-full px-4 py-2 justify-between">
-                <p>Salary</p>
-                <p>11,000</p>
-              </div>
-              <div className="border-dashed border-2 mb-2 border-slate-900 py-1 px-2">
-                + Add Item
-              </div>
-            </div>
-          </div>
-          <div className="flex-1 w-full p-2 flex flex-col items-center">
-            <p className="mb-3">Expenses</p>
-            <ul className="w-full flex gap-2 flex-col items-center p-4 border-2 border-slate-900 min-h-[400px]">
-              <li className="flex w-full px-4 py-2 justify-between">
-                <p>Allowance</p>
-                <p>2,000</p>
-              </li>
-              <div className="border-dashed border-2 mb-2 border-slate-900 py-1 px-2">
-                + Add Item
-              </div>
-            </ul>
-          </div>
+          <ItemTable items={["chu", "chus"]} title="Funds"></ItemTable>
+          <ItemTable items={["chu", "chus"]} title="Expenses"></ItemTable>
         </div>
         <div className="flex gap-5 mt-5 ">
           <div className="p-2">
@@ -91,7 +73,11 @@ export default function Home() {
           </div>
         </div>
       </section>
-      <section className="w-[20%]"></section>
+      <section className="w-[20%] max-h-full bg-primary p-5">
+        <p className="text-slate-600">
+          Still thinking what to put in this section
+        </p>
+      </section>
     </main>
   );
 }
