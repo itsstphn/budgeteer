@@ -1,5 +1,6 @@
 import ItemTable from "@/components/ItemTable";
 import Button from "@/components/ui/Button";
+import clientPromise from "@/lib/mongodb";
 import Image from "next/image";
 
 export default function Home() {
@@ -45,8 +46,16 @@ export default function Home() {
         </div>
 
         <div className="flex w-full bg-slate-400 mt-5 p-5">
-          <ItemTable items={["chu", "chus"]} title="Funds"></ItemTable>
-          <ItemTable items={["chu", "chus"]} title="Expenses"></ItemTable>
+          <ItemTable
+            items={["chu", "chus"]}
+            title="Funds"
+            value="fund"
+          ></ItemTable>
+          <ItemTable
+            items={["chu", "chus"]}
+            title="Expenses"
+            value="expense"
+          ></ItemTable>
         </div>
         <div className="flex gap-5 mt-5 ">
           <div className="p-2">

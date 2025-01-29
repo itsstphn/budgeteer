@@ -1,17 +1,33 @@
 "use client";
 
+import { useState } from "react";
 import Button from "./ui/Button";
+import Modal from "./ui/Modal";
 
 interface ItemTableProps {
   items: (string | number)[];
   title: string;
+  value: string;
 }
 
-function handleAddItemClick() {
-  console.log("Add Item clicked");
-}
+export default function ItemTable({
+  action,
+  items,
+  title,
+  value,
+}: ItemTableProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [targetType, setTargetType] = useState<string | null>(null);
 
-export default function ItemTable({ action, items, title }: ItemTableProps) {
+  function handleAddItemClick(title: string) {
+    setIsModalOpen(true);
+    setTargetType(title);
+  }
+
+  function handleCloseModal() {
+    setIsModalOpen(false);
+  }
+
   return (
     <div className="flex-1 w-full p-2 flex flex-col items-center">
       <p className="mb-3">{title}</p>
@@ -20,8 +36,21 @@ export default function ItemTable({ action, items, title }: ItemTableProps) {
           <p>Salary</p>
           <p>11,000</p>
         </div>
-        <Button action={handleAddItemClick} text="+ Add Item"></Button>
+        <Button
+          action={() => handleAddItemClick(title)}
+          text="+ Add Item"
+        ></Button>
       </div>
+      <Modal
+        targetType={targetType}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      >
+        <div>
+          <p>Add {value}</p>
+        </div>
+        <button onClick={handleCloseModal}>close</button>
+      </Modal>
     </div>
   );
 }
