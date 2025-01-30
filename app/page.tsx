@@ -34,7 +34,7 @@ export default function Home() {
             </form>
           </div>
           <div className="bg-primary w-fit p-2">
-            <p>Month</p>
+            <p>Week</p>
             <form action="">
               <label htmlFor=""></label>
               <select name="week" id="week">
