@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
+import { FormProvider } from "@/providers/FormContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,10 +18,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} bg-slate-50`}>
-        <NavBar></NavBar>
-        {children}
-      </body>
+      <FormProvider>
+        <body className={`${inter.className} bg-slate-50`}>
+          <NavBar></NavBar>
+          {children}
+        </body>
+      </FormProvider>
     </html>
   );
 }

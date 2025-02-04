@@ -11,12 +11,7 @@ interface ItemTableProps {
   value: string;
 }
 
-export default function ItemTable({
-  action,
-  items,
-  title,
-  value,
-}: ItemTableProps) {
+export default function ItemTable({ items, title, value }: ItemTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [targetType, setTargetType] = useState<string | null>(null);
   const [isRecurring, setIsRecurring] = useState(false);
