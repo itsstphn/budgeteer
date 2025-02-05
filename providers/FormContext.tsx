@@ -1,6 +1,8 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { getCurrentMonth, getCurrentWeek } from "@/lib/date";
+
+import { createContext, useContext, useEffect, useState } from "react";
 
 interface FormContextProps {
   selectedMonth: string;
@@ -14,6 +16,14 @@ const FormContext = createContext<FormContextProps | undefined>(undefined);
 export const FormProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedMonth, setSelectedMonth] = useState<string>("");
   const [selectedWeek, setSelectedWeek] = useState<string>("");
+
+  useEffect(() => {
+    const month = getCurrentMonth();
+    const week = getCurrentWeek();
+
+    setSelectedMonth(month);
+    setSelectedWeek(week);
+  }, []);
 
   return (
     <FormContext.Provider
