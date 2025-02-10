@@ -20,16 +20,8 @@ export default function Home() {
         </div>
 
         <div className="flex w-full bg-slate-400 mt-5 p-5">
-          <ItemTable
-            items={["chu", "chus"]}
-            title="Funds"
-            value="fund"
-          ></ItemTable>
-          <ItemTable
-            items={["chu", "chus"]}
-            title="Expenses"
-            value="expense"
-          ></ItemTable>
+          <ItemTable title="Funds" value="fund"></ItemTable>
+          <ItemTable title="Expenses" value="expense"></ItemTable>
         </div>
         <div className="flex gap-5 mt-5 ">
           <div className="p-2">

@@ -1,20 +1,45 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "./ui/Button";
 import Modal from "./ui/Modal";
 import _ from "lodash";
 
 interface ItemTableProps {
-  items: (string | number)[];
   title: string;
   value: string;
 }
 
-export default function ItemTable({ items, title, value }: ItemTableProps) {
+interface ItemProps {
+  item_id: string;
+  name: string;
+  amount: number;
+}
+
+export default function ItemTable({ title, value }: ItemTableProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const [items, setItems] = useState([]);
   const [targetType, setTargetType] = useState<string | null>(null);
   const [isRecurring, setIsRecurring] = useState(false);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch(`/api?type=${value}`, {
+          method: "GET",
+        });
+
+        const data = await response.json();
+        console.log(data);
+        setItems(data);
+      } catch (e) {
+        console.log("Failed to fetch data", e);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   function handleAddItemClick(title: string) {
     setIsModalOpen(true);
@@ -25,26 +50,53 @@ export default function ItemTable({ items, title, value }: ItemTableProps) {
     setIsModalOpen(false);
   }
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
-    console.log({ ...data, targetType: value });
+    // console.log({ ...data, targetType: value });
+    console.log("handleSubmit clicked");
+
+    try {
+      console.log("fetching");
+      const response = await fetch("/api", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ ...data, type: value }),
+      });
+
+      console.log("response", await response.json());
+
+      if (response.ok) {
+        console.log("Success");
+        handleCloseModal();
+      }
+    } catch {
+      console.log("Failed");
+    }
   }
+
+  const listItems = items.map((item: ItemProps) => {
+    return (
+      <li key={item.item_id} className="flex w-full px-4 py-2 justify-between">
+        <p>{item.name}</p>
+        <p>{item.amount}</p>
+      </li>
+    );
+  });
 
   return (
     <div className="flex-1 w-full p-2 flex flex-col items-center">
       <p className="mb-3">{title}</p>
-      <div className="w-full flex gap-2 flex-col items-center p-4 border-2 border-slate-900 min-h-[400px]">
-        <div className="flex w-full px-4 py-2 justify-between">
-          <p>Salary</p>
-          <p>11,000</p>
-        </div>
+      <ul className="w-full flex gap-2 flex-col items-center p-4 border-2 border-slate-900 min-h-[400px]">
+        {listItems}
         <Button
           action={() => handleAddItemClick(title)}
           text="+ Add Item"
         ></Button>
-      </div>
+      </ul>
       <Modal
         targetType={targetType}
         isOpen={isModalOpen}
@@ -85,7 +137,7 @@ export default function ItemTable({ items, title, value }: ItemTableProps) {
               />
               Recurring
             </label>
-            {isRecurring && (
+            {/* {isRecurring && (
               <div>
                 <label htmlFor="recurringEvery">Every: </label>
                 <select name="recurringEvery" id="recurringEvery">
@@ -94,7 +146,7 @@ export default function ItemTable({ items, title, value }: ItemTableProps) {
                   <option value="second">3rd-4th week</option>
                 </select>
               </div>
-            )}
+            )} */}
 
             <div className="flex gap-2">
               <button className="border-2 px-2 py-1" type="submit">
