@@ -7,10 +7,10 @@ export async function GET(request: NextRequest) {
 
     const db = client.db("budgeteer-dev");
 
-    const items = await db.collection("items").find({}).toArray();
-
     const searchParams = request.nextUrl.searchParams;
     const query = searchParams.get("type");
+
+    const items = await db.collection("items").find({ type: query }).toArray();
 
     console.log("query", query);
 

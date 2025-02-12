@@ -11,7 +11,7 @@ interface ItemTableProps {
 }
 
 interface ItemProps {
-  item_id: string;
+  _id: string;
   name: string;
   amount: number;
 }
@@ -31,15 +31,16 @@ export default function ItemTable({ title, value }: ItemTableProps) {
         });
 
         const data = await response.json();
-        console.log(data);
+        console.log("this", data);
         setItems(data);
       } catch (e) {
         console.log("Failed to fetch data", e);
       }
     }
-
-    fetchData();
-  }, []);
+    if (!isModalOpen) {
+      fetchData();
+    }
+  }, [value, isModalOpen]);
 
   function handleAddItemClick(title: string) {
     setIsModalOpen(true);
@@ -80,7 +81,7 @@ export default function ItemTable({ title, value }: ItemTableProps) {
 
   const listItems = items.map((item: ItemProps) => {
     return (
-      <li key={item.item_id} className="flex w-full px-4 py-2 justify-between">
+      <li key={item._id} className="flex w-full px-4 py-2 justify-between">
         <p>{item.name}</p>
         <p>{item.amount}</p>
       </li>
