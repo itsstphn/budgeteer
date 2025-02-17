@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import NavBar from "@/components/NavBar";
 import { FormProvider } from "@/providers/FormContext";
+import { BudgetSummaryProvider } from "./../providers/BudgetSummaryContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,10 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <FormProvider>
-        <body className={`${inter.className} bg-slate-50`}>
-          <NavBar></NavBar>
-          {children}
-        </body>
+        <BudgetSummaryProvider>
+          <body className={`${inter.className} bg-slate-50`}>
+            <NavBar></NavBar>
+            {children}
+          </body>
+        </BudgetSummaryProvider>
       </FormProvider>
     </html>
   );

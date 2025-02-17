@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import Button from "./ui/Button";
 import Modal from "./ui/Modal";
 import _ from "lodash";
+import { useFormContext } from "@/providers/FormContext";
+import { useBudgetSummaryContext } from "@/providers/BudgetSummaryContext";
 
 interface ItemTableProps {
   title: string;
@@ -14,11 +16,18 @@ interface ItemProps {
   _id: string;
   name: string;
   amount: number;
+  type: string;
+}
+
+interface Summary {
+  totalFunds: number;
+  totalExpenses: number;
 }
 
 export default function ItemTable({ title, value }: ItemTableProps) {
+  const { selectedMonth, selectedWeek } = useFormContext();
+  const { setBudgetSummary } = useBudgetSummaryContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [items, setItems] = useState([]);
   const [targetType, setTargetType] = useState<string | null>(null);
   const [isRecurring, setIsRecurring] = useState(false);
@@ -26,21 +35,48 @@ export default function ItemTable({ title, value }: ItemTableProps) {
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch(`/api?type=${value}`, {
-          method: "GET",
-        });
+        const response = await fetch(
+          `/api?type=${value}&month=${selectedMonth}&week=${selectedWeek}`,
+          {
+            method: "GET",
+          }
+        );
 
         const data = await response.json();
-        console.log("this", data);
+        console.log("this result", data);
         setItems(data);
+
+        const summary = data.reduce(
+          (acc: Summary, item: ItemProps) => {
+            if (item.type === "fund") {
+              acc.totalFunds += +item.amount;
+            } else if (item.type === "expense") {
+              acc.totalExpenses += +item.amount;
+            }
+            return acc;
+          },
+          { totalFunds: 0, totalExpenses: 0 }
+        );
+
+        if (value === "fund") {
+          setBudgetSummary((prevSummary) => ({
+            ...prevSummary,
+            funds: summary.totalFunds,
+          }));
+        } else if (value === "expense") {
+          setBudgetSummary((prevSummary) => ({
+            ...prevSummary,
+            expenses: summary.totalExpenses,
+          }));
+        }
       } catch (e) {
         console.log("Failed to fetch data", e);
       }
     }
-    if (!isModalOpen) {
+    if (!isModalOpen && selectedMonth && selectedWeek) {
       fetchData();
     }
-  }, [value, isModalOpen]);
+  }, [value, selectedMonth, selectedWeek, isModalOpen, setBudgetSummary]);
 
   function handleAddItemClick(title: string) {
     setIsModalOpen(true);
@@ -55,7 +91,6 @@ export default function ItemTable({ title, value }: ItemTableProps) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
-    // console.log({ ...data, targetType: value });
     console.log("handleSubmit clicked");
 
     try {
@@ -65,7 +100,11 @@ export default function ItemTable({ title, value }: ItemTableProps) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ ...data, type: value }),
+        body: JSON.stringify({
+          ...data,
+          type: value,
+          selectedPeriod: { selectedMonth, selectedWeek },
+        }),
       });
 
       console.log("response", await response.json());
@@ -128,7 +167,7 @@ export default function ItemTable({ title, value }: ItemTableProps) {
                 name="amount"
               />
             </div>
-            <label htmlFor="recurring">
+            <label className="w-fit" htmlFor="recurring">
               <input
                 className="mx-2"
                 type="checkbox"

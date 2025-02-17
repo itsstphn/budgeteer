@@ -8,11 +8,27 @@ export async function GET(request: NextRequest) {
     const db = client.db("budgeteer-dev");
 
     const searchParams = request.nextUrl.searchParams;
-    const query = searchParams.get("type");
+    const type = searchParams.get("type");
+    const month = searchParams.get("month");
+    const week = searchParams.get("week");
 
-    const items = await db.collection("items").find({ type: query }).toArray();
+    console.log("queries from route", type, month, week);
 
-    console.log("query", query);
+    const items = await db
+      .collection("items")
+      .find({
+        type: type,
+        $or: [
+          {
+            "selectedPeriod.selectedMonth": month,
+            "selectedPeriod.selectedWeek": week,
+          },
+          {
+            recurring: "on",
+          },
+        ],
+      })
+      .toArray();
 
     console.log("items", items);
 

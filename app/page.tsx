@@ -4,6 +4,7 @@ import Button from "@/components/ui/Button";
 import clientPromise from "@/lib/mongodb";
 import Image from "next/image";
 import WeekPicker from "./../components/WeekPicker";
+import FinancialSummary from "./../components/FinancialSummary";
 
 export default function Home() {
   return (
@@ -23,30 +24,7 @@ export default function Home() {
           <ItemTable title="Funds" value="fund"></ItemTable>
           <ItemTable title="Expenses" value="expense"></ItemTable>
         </div>
-        <div className="flex gap-5 mt-5 ">
-          <div className="p-2">
-            <div>
-              <p>Total Funds:</p>
-            </div>
-            <div>
-              <p>Total Expenses:</p>
-            </div>
-            <div>
-              <p>Projected Money Left:</p>
-            </div>
-          </div>
-          <div className="bg-slate-400 p-2 min-w-[150px]">
-            <div className="">
-              <p className="text-right">11,500</p>
-            </div>
-            <div>
-              <p className="text-right">2,000</p>
-            </div>
-            <div>
-              <p className="text-right">9,500</p>
-            </div>
-          </div>
-        </div>
+        <FinancialSummary></FinancialSummary>
       </section>
       <section className="w-[20%] max-h-full bg-primary p-5">
         <p className="text-slate-600">
