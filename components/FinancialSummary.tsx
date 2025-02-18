@@ -30,13 +30,15 @@ export default function FinancialSummary() {
       </div>
       <div className="bg-slate-400 p-2 min-w-[150px]">
         <div className="">
-          <p className="text-right">{funds}</p>
+          <p className="text-right">{funds.toLocaleString()}</p>
         </div>
         <div>
-          <p className="text-right">{expenses}</p>
+          <p className="text-right">{expenses.toLocaleString()}</p>
         </div>
         <div>
-          <p className="text-right">{projectedMoneyLeft}</p>
+          <p className="text-right text-lg font-bold text-[#ffffff]">
+            {projectedMoneyLeft.toLocaleString()}
+          </p>
         </div>
       </div>
     </div>

@@ -6,6 +6,8 @@ import Modal from "./ui/Modal";
 import _ from "lodash";
 import { useFormContext } from "@/providers/FormContext";
 import { useBudgetSummaryContext } from "@/providers/BudgetSummaryContext";
+import { Pencil, Trash2 } from "lucide-react";
+import { FormItem } from "./forms/FormItem";
 
 interface ItemTableProps {
   title: string;
@@ -120,9 +122,20 @@ export default function ItemTable({ title, value }: ItemTableProps) {
 
   const listItems = items.map((item: ItemProps) => {
     return (
-      <li key={item._id} className="flex w-full px-4 py-2 justify-between">
+      <li
+        key={item._id}
+        className="group flex w-full px-2 py-2 justify-between"
+      >
         <p>{item.name}</p>
-        <p>{item.amount}</p>
+        <p>{Number(item.amount).toLocaleString()}</p>
+        <div className=" flex gap-2">
+          <div className="group-hover:visible cursor-pointer invisible">
+            <Pencil size={18} strokeWidth={1.2}></Pencil>
+          </div>
+          <div className="group-hover:visible  invisible cursor-pointer">
+            <Trash2 size={18} strokeWidth={1.2}></Trash2>
+          </div>
+        </div>
       </li>
     );
   });
@@ -142,62 +155,13 @@ export default function ItemTable({ title, value }: ItemTableProps) {
         isOpen={isModalOpen}
         onClose={handleCloseModal}
       >
-        <div className="flex flex-col gap-4">
-          <p className="text-center">Add {_.capitalize(value)}</p>
-          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
-            <div>
-              <label className="inline-block min-w-[80px]" htmlFor="name">
-                Name:{" "}
-              </label>
-              <input
-                className="border-2 px-1"
-                type="text"
-                id="name"
-                name="name"
-              />
-            </div>
-            <div>
-              <label className="inline-block min-w-[80px]" htmlFor="amount">
-                Amount:{" "}
-              </label>
-              <input
-                className="border-2 px-1"
-                type="number"
-                id="amount"
-                name="amount"
-              />
-            </div>
-            <label className="w-fit" htmlFor="recurring">
-              <input
-                className="mx-2"
-                type="checkbox"
-                id="recurring"
-                name="recurring"
-                onChange={() => setIsRecurring(!isRecurring)}
-              />
-              Recurring
-            </label>
-            {/* {isRecurring && (
-              <div>
-                <label htmlFor="recurringEvery">Every: </label>
-                <select name="recurringEvery" id="recurringEvery">
-                  <option value="cycle">Cycle</option>
-                  <option value="first">1st-2nd week</option>
-                  <option value="second">3rd-4th week</option>
-                </select>
-              </div>
-            )} */}
-
-            <div className="flex gap-2">
-              <button className="border-2 px-2 py-1" type="submit">
-                Confirm
-              </button>
-              <button className="border-2 px-2 py-1" onClick={handleCloseModal}>
-                Close
-              </button>
-            </div>
-          </form>
-        </div>
+        <FormItem
+          value={value}
+          handleCloseModal={handleCloseModal}
+          handleSubmit={handleSubmit}
+          setIsRecurring={setIsRecurring}
+          isRecurring={isRecurring}
+        ></FormItem>
       </Modal>
     </div>
   );
