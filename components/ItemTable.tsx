@@ -26,10 +26,19 @@ interface Summary {
   totalExpenses: number;
 }
 
+interface ModalState {
+  open: boolean;
+  actionType: string | null;
+}
+
 export default function ItemTable({ title, value }: ItemTableProps) {
   const { selectedMonth, selectedWeek } = useFormContext();
   const { setBudgetSummary } = useBudgetSummaryContext();
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState<ModalState>({
+    open: false,
+    actionType: null,
+  });
+  const [editItemID, setEditItemID] = useState<string | null>(null);
   const [items, setItems] = useState([]);
   const [targetType, setTargetType] = useState<string | null>(null);
   const [isRecurring, setIsRecurring] = useState(false);
@@ -75,18 +84,24 @@ export default function ItemTable({ title, value }: ItemTableProps) {
         console.log("Failed to fetch data", e);
       }
     }
-    if (!isModalOpen && selectedMonth && selectedWeek) {
+    if (!isModalOpen.open && selectedMonth && selectedWeek) {
       fetchData();
     }
   }, [value, selectedMonth, selectedWeek, isModalOpen, setBudgetSummary]);
 
   function handleAddItemClick(title: string) {
-    setIsModalOpen(true);
+    setIsModalOpen({ open: true, actionType: "add" });
     setTargetType(title);
   }
 
+  function handleEditItemClick(itemID: string) {
+    setIsModalOpen({ open: true, actionType: "edit" });
+    setTargetType(title);
+    setEditItemID(itemID);
+  }
+
   function handleCloseModal() {
-    setIsModalOpen(false);
+    setIsModalOpen({ open: false, actionType: null });
   }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -129,7 +144,10 @@ export default function ItemTable({ title, value }: ItemTableProps) {
         <p>{item.name}</p>
         <p>{Number(item.amount).toLocaleString()}</p>
         <div className=" flex gap-2">
-          <div className="group-hover:visible cursor-pointer invisible">
+          <div
+            onClick={() => handleEditItemClick(item._id)}
+            className="group-hover:visible cursor-pointer invisible"
+          >
             <Pencil size={18} strokeWidth={1.2}></Pencil>
           </div>
           <div className="group-hover:visible  invisible cursor-pointer">
@@ -152,10 +170,12 @@ export default function ItemTable({ title, value }: ItemTableProps) {
       </ul>
       <Modal
         targetType={targetType}
-        isOpen={isModalOpen}
+        isOpen={isModalOpen.open}
         onClose={handleCloseModal}
       >
         <FormItem
+          formType={isModalOpen.actionType}
+          itemID={editItemID}
           value={value}
           handleCloseModal={handleCloseModal}
           handleSubmit={handleSubmit}

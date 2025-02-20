@@ -1,8 +1,11 @@
 "use client";
 
 import _ from "lodash";
+import { useEffect, useState } from "react";
 
-interface FormAddItemProps {
+interface FormItemProps {
+  formType: string | null;
+  itemID: string | null;
   value: string;
   handleCloseModal: () => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -16,22 +19,68 @@ export function FormItem({
   handleSubmit,
   setIsRecurring,
   isRecurring,
-}: FormAddItemProps) {
+  formType,
+  itemID,
+}: FormItemProps) {
+  console.log("clicked itemID", itemID);
+
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState(0);
+  const [recurring, setRecurring] = useState(false);
+
+  const [itemData, setItemData] = useState(null);
+
+  useEffect(() => {
+    async function fetchItemData() {
+      if (itemID) {
+        try {
+          const response = await fetch(`/api/items/${itemID}`); // Replace with your API endpoint
+          const data = await response.json();
+          setItemData(data);
+          setName(data.name);
+          setAmount(+data.amount);
+          setRecurring(data.recurring);
+        } catch (error) {
+          console.error("Failed to fetch item data", error);
+        }
+      }
+    }
+
+    fetchItemData();
+  }, [itemID]);
+
+  console.log("cliecked itemData", itemData);
+
+  if (!itemData) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-center">Add {_.capitalize(value)}</p>
+      <p className="text-center">
+        {formType && _.capitalize(formType)} {_.capitalize(value)}
+      </p>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div>
           <label className="inline-block min-w-[80px]" htmlFor="name">
             Name:{" "}
           </label>
-          <input className="border-2 px-1" type="text" id="name" name="name" />
+          <input
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="border-2 px-1"
+            type="text"
+            id="name"
+            name="name"
+          />
         </div>
         <div>
           <label className="inline-block min-w-[80px]" htmlFor="amount">
             Amount:{" "}
           </label>
           <input
+            value={amount}
+            onChange={(e) => setAmount(+e.target.value)}
             className="border-2 px-1"
             type="number"
             id="amount"
@@ -40,6 +89,7 @@ export function FormItem({
         </div>
         <label className="w-fit" htmlFor="recurring">
           <input
+            checked={recurring}
             className="mx-2"
             type="checkbox"
             id="recurring"
