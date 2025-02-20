@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Button from "./ui/Button";
 import Modal from "./ui/Modal";
 import _ from "lodash";
@@ -100,9 +100,10 @@ export default function ItemTable({ title, value }: ItemTableProps) {
     setEditItemID(itemID);
   }
 
-  function handleCloseModal() {
+  const handleCloseModal = useCallback(() => {
     setIsModalOpen({ open: false, actionType: null });
-  }
+    setEditItemID(null);
+  }, [setIsModalOpen]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();

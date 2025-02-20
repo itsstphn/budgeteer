@@ -43,6 +43,11 @@ export function FormItem({
         } catch (error) {
           console.error("Failed to fetch item data", error);
         }
+      } else {
+        setName("");
+        setAmount(0);
+        setRecurring(false);
+        setItemData(null);
       }
     }
 
@@ -51,7 +56,7 @@ export function FormItem({
 
   console.log("cliecked itemData", itemData);
 
-  if (!itemData) {
+  if (formType === "edit" && !itemData) {
     return <p>Loading...</p>;
   }
 
