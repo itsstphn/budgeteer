@@ -113,17 +113,20 @@ export default function ItemTable({ title, value }: ItemTableProps) {
 
     try {
       console.log("fetching");
-      const response = await fetch("/api", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...data,
-          type: value,
-          selectedPeriod: { selectedMonth, selectedWeek },
-        }),
-      });
+      const response = await fetch(
+        `/api/${isModalOpen.actionType === "edit" && "items/" + editItemID}`,
+        {
+          method: isModalOpen.actionType === "add" ? "POST" : "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...data,
+            type: value,
+            selectedPeriod: { selectedMonth, selectedWeek },
+          }),
+        }
+      );
 
       console.log("response", await response.json());
 
