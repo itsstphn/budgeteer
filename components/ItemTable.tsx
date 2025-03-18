@@ -8,6 +8,8 @@ import { useFormContext } from "@/providers/FormContext";
 import { useBudgetSummaryContext } from "@/providers/BudgetSummaryContext";
 import { Pencil, Trash2 } from "lucide-react";
 import { FormItem } from "./forms/FormItem";
+import { FormAddItem } from "./forms/FormAddItem";
+import { FormEditItem } from "./forms/FormEditItem";
 
 interface ItemTableProps {
   title: string;
@@ -38,6 +40,8 @@ export default function ItemTable({ title, value }: ItemTableProps) {
     open: false,
     actionType: null,
   });
+  const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editItemID, setEditItemID] = useState<string | null>(null);
   const [items, setItems] = useState([]);
   const [targetType, setTargetType] = useState<string | null>(null);
@@ -84,28 +88,100 @@ export default function ItemTable({ title, value }: ItemTableProps) {
         console.log("Failed to fetch data", e);
       }
     }
-    if (!isModalOpen.open && selectedMonth && selectedWeek) {
+    if (!isAddModalOpen && !isEditModalOpen && selectedMonth && selectedWeek) {
       fetchData();
     }
-  }, [value, selectedMonth, selectedWeek, isModalOpen, setBudgetSummary]);
+  }, [
+    value,
+    selectedMonth,
+    selectedWeek,
+    isAddModalOpen,
+    isEditModalOpen,
+    setBudgetSummary,
+  ]);
 
   function handleAddItemClick(title: string) {
-    setIsModalOpen({ open: true, actionType: "add" });
-    setTargetType(title);
+    setIsAddModalOpen(true);
   }
 
   function handleEditItemClick(itemID: string) {
-    setIsModalOpen({ open: true, actionType: "edit" });
-    setTargetType(title);
+    setIsEditModalOpen(true);
     setEditItemID(itemID);
   }
 
   const handleCloseModal = useCallback(() => {
-    setIsModalOpen({ open: false, actionType: null });
+    setIsAddModalOpen(false);
+    setIsEditModalOpen(false);
     setEditItemID(null);
-  }, [setIsModalOpen]);
+  }, []);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  // async function handleEditSubmit(e: React.FormEvent<HTMLFormElement>) {
+  //   e.preventDefault();
+  //   const formData = new FormData(e.currentTarget);
+  //   const data = Object.fromEntries(formData.entries());
+  //   console.log("handleSubmit clicked");
+
+  //   try {
+  //     console.log("fetching");
+  //     const response = await fetch(`/api/items/` + editItemID, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         ...data,
+  //         type: value,
+  //         selectedPeriod: { selectedMonth, selectedWeek },
+  //       }),
+  //     });
+
+  //     console.log("response", await response.json());
+
+  //     if (response.ok) {
+  //       console.log("Success");
+  //       handleCloseModal();
+  //     }
+  //   } catch {
+  //     console.log("Failed");
+  //   }
+  // }
+
+  // async function handleAddSubmit(e: React.FormEvent<HTMLFormElement>) {
+  //   e.preventDefault();
+  //   const formData = new FormData(e.currentTarget);
+  //   const data = Object.fromEntries(formData.entries());
+  //   console.log("handleSubmit clicked");
+
+  //   try {
+  //     console.log("fetching");
+  //     const response = await fetch(`/api`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({
+  //         ...data,
+  //         type: value,
+  //         selectedPeriod: { selectedMonth, selectedWeek },
+  //       }),
+  //     });
+
+  //     console.log("response", await response.json());
+
+  //     if (response.ok) {
+  //       console.log("Success");
+  //       handleCloseModal();
+  //     }
+  //   } catch {
+  //     console.log("Failed");
+  //   }
+  // }
+
+  async function handleSubmit(
+    e: React.FormEvent<HTMLFormElement>,
+    url: string,
+    method: string
+  ) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
@@ -113,20 +189,17 @@ export default function ItemTable({ title, value }: ItemTableProps) {
 
     try {
       console.log("fetching");
-      const response = await fetch(
-        `/api/${isModalOpen.actionType === "edit" && "items/" + editItemID}`,
-        {
-          method: isModalOpen.actionType === "add" ? "POST" : "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            ...data,
-            type: value,
-            selectedPeriod: { selectedMonth, selectedWeek },
-          }),
-        }
-      );
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          ...data,
+          type: value,
+          selectedPeriod: { selectedMonth, selectedWeek },
+        }),
+      });
 
       console.log("response", await response.json());
 
@@ -137,6 +210,14 @@ export default function ItemTable({ title, value }: ItemTableProps) {
     } catch {
       console.log("Failed");
     }
+  }
+
+  async function handleEditSubmit(e: React.FormEvent<HTMLFormElement>) {
+    await handleSubmit(e, `/api/items/` + editItemID, "PUT");
+  }
+
+  async function handleAddSubmit(e: React.FormEvent<HTMLFormElement>) {
+    await handleSubmit(e, `/api`, "POST");
   }
 
   const listItems = items.map((item: ItemProps) => {
@@ -174,18 +255,30 @@ export default function ItemTable({ title, value }: ItemTableProps) {
       </ul>
       <Modal
         targetType={targetType}
-        isOpen={isModalOpen.open}
+        isOpen={isAddModalOpen}
         onClose={handleCloseModal}
       >
-        <FormItem
-          formType={isModalOpen.actionType}
+        <FormAddItem
+          value={value}
+          handleCloseModal={handleCloseModal}
+          handleSubmit={handleAddSubmit}
+          setIsRecurring={setIsRecurring}
+          isRecurring={isRecurring}
+        ></FormAddItem>
+      </Modal>
+      <Modal
+        targetType={targetType}
+        isOpen={isEditModalOpen}
+        onClose={handleCloseModal}
+      >
+        <FormEditItem
           itemID={editItemID}
           value={value}
           handleCloseModal={handleCloseModal}
-          handleSubmit={handleSubmit}
+          handleSubmit={handleEditSubmit}
           setIsRecurring={setIsRecurring}
           isRecurring={isRecurring}
-        ></FormItem>
+        ></FormEditItem>
       </Modal>
     </div>
   );

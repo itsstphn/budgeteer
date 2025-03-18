@@ -3,8 +3,7 @@
 import _ from "lodash";
 import { useEffect, useState } from "react";
 
-interface FormItemProps {
-  formType: string | null;
+interface FormEditItemProps {
   itemID: string | null;
   value: string;
   handleCloseModal: () => void;
@@ -13,17 +12,15 @@ interface FormItemProps {
   isRecurring: boolean;
 }
 
-export function FormItem({
+export function FormEditItem({
   value,
   handleCloseModal,
   handleSubmit,
   setIsRecurring,
   isRecurring,
-  formType,
   itemID,
-}: FormItemProps) {
+}: FormEditItemProps) {
   console.log("clicked itemID", itemID);
-  console.log("clicked formType", formType);
 
   const [name, setName] = useState("");
   const [amount, setAmount] = useState(0);
@@ -57,15 +54,13 @@ export function FormItem({
 
   console.log("cliecked itemData", itemData);
 
-  if (formType === "edit" && !itemData) {
+  if (!itemData) {
     return <p>Loading...</p>;
   }
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-center">
-        {formType && _.capitalize(formType)} {_.capitalize(value)}
-      </p>
+      <p className="text-center">Edit {_.capitalize(value)}</p>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div>
           <label className="inline-block min-w-[80px]" htmlFor="name">

@@ -3,9 +3,7 @@
 import _ from "lodash";
 import { useEffect, useState } from "react";
 
-interface FormItemProps {
-  formType: string | null;
-  itemID: string | null;
+interface FormAddItemProps {
   value: string;
   handleCloseModal: () => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
@@ -13,59 +11,19 @@ interface FormItemProps {
   isRecurring: boolean;
 }
 
-export function FormItem({
+export function FormAddItem({
   value,
   handleCloseModal,
   handleSubmit,
   setIsRecurring,
   isRecurring,
-  formType,
-  itemID,
-}: FormItemProps) {
-  console.log("clicked itemID", itemID);
-  console.log("clicked formType", formType);
-
+}: FormAddItemProps) {
   const [name, setName] = useState("");
   const [amount, setAmount] = useState(0);
-  const [recurring, setRecurring] = useState(false);
-
-  const [itemData, setItemData] = useState(null);
-
-  useEffect(() => {
-    async function fetchItemData() {
-      if (itemID) {
-        try {
-          const response = await fetch(`/api/items/${itemID}`); // Replace with your API endpoint
-          const data = await response.json();
-          setItemData(data);
-          setName(data.name);
-          setAmount(+data.amount);
-          setRecurring(data.recurring);
-        } catch (error) {
-          console.error("Failed to fetch item data", error);
-        }
-      } else {
-        setName("");
-        setAmount(0);
-        setRecurring(false);
-        setItemData(null);
-      }
-    }
-
-    fetchItemData();
-  }, [itemID]);
-
-  console.log("cliecked itemData", itemData);
-
-  if (formType === "edit" && !itemData) {
-    return <p>Loading...</p>;
-  }
 
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-center">
-        {formType && _.capitalize(formType)} {_.capitalize(value)}
-      </p>
+      <p className="text-center">Add {_.capitalize(value)}</p>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div>
           <label className="inline-block min-w-[80px]" htmlFor="name">
@@ -95,7 +53,6 @@ export function FormItem({
         </div>
         <label className="w-fit" htmlFor="recurring">
           <input
-            checked={recurring}
             className="mx-2"
             type="checkbox"
             id="recurring"
