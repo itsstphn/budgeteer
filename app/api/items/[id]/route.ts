@@ -68,3 +68,33 @@ export async function PUT(
     return NextResponse.json({ success: false });
   }
 }
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  try {
+    const client = await clientPromise;
+    const db = client.db("budgeteer-dev");
+    const id = params.id;
+
+    const result = await db
+      .collection("items")
+      .deleteOne({ _id: new ObjectId(id) });
+
+    if (result.deletedCount === 0) {
+      return NextResponse.json(
+        { success: false, message: "Item not found" },
+        { status: 404 }
+      );
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Item deleted successfully",
+    });
+  } catch (e) {
+    console.error(e);
+    return NextResponse.json({ success: false });
+  }
+}

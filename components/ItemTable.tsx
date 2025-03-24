@@ -46,6 +46,9 @@ export default function ItemTable({ title, value }: ItemTableProps) {
   const [items, setItems] = useState([]);
   const [targetType, setTargetType] = useState<string | null>(null);
   const [isRecurring, setIsRecurring] = useState(false);
+  const [shouldRefetch, setShouldRefetch] = useState(false);
+
+  console.log("shouldRefetch", shouldRefetch);
 
   useEffect(() => {
     async function fetchData() {
@@ -88,7 +91,7 @@ export default function ItemTable({ title, value }: ItemTableProps) {
         console.log("Failed to fetch data", e);
       }
     }
-    if (!isAddModalOpen && !isEditModalOpen && selectedMonth && selectedWeek) {
+    if (selectedMonth && selectedWeek) {
       fetchData();
     }
   }, [
@@ -98,6 +101,7 @@ export default function ItemTable({ title, value }: ItemTableProps) {
     isAddModalOpen,
     isEditModalOpen,
     setBudgetSummary,
+    shouldRefetch,
   ]);
 
   function handleAddItemClick(title: string) {
@@ -114,68 +118,6 @@ export default function ItemTable({ title, value }: ItemTableProps) {
     setIsEditModalOpen(false);
     setEditItemID(null);
   }, []);
-
-  // async function handleEditSubmit(e: React.FormEvent<HTMLFormElement>) {
-  //   e.preventDefault();
-  //   const formData = new FormData(e.currentTarget);
-  //   const data = Object.fromEntries(formData.entries());
-  //   console.log("handleSubmit clicked");
-
-  //   try {
-  //     console.log("fetching");
-  //     const response = await fetch(`/api/items/` + editItemID, {
-  //       method: "PUT",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         ...data,
-  //         type: value,
-  //         selectedPeriod: { selectedMonth, selectedWeek },
-  //       }),
-  //     });
-
-  //     console.log("response", await response.json());
-
-  //     if (response.ok) {
-  //       console.log("Success");
-  //       handleCloseModal();
-  //     }
-  //   } catch {
-  //     console.log("Failed");
-  //   }
-  // }
-
-  // async function handleAddSubmit(e: React.FormEvent<HTMLFormElement>) {
-  //   e.preventDefault();
-  //   const formData = new FormData(e.currentTarget);
-  //   const data = Object.fromEntries(formData.entries());
-  //   console.log("handleSubmit clicked");
-
-  //   try {
-  //     console.log("fetching");
-  //     const response = await fetch(`/api`, {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //       body: JSON.stringify({
-  //         ...data,
-  //         type: value,
-  //         selectedPeriod: { selectedMonth, selectedWeek },
-  //       }),
-  //     });
-
-  //     console.log("response", await response.json());
-
-  //     if (response.ok) {
-  //       console.log("Success");
-  //       handleCloseModal();
-  //     }
-  //   } catch {
-  //     console.log("Failed");
-  //   }
-  // }
 
   async function handleSubmit(
     e: React.FormEvent<HTMLFormElement>,
@@ -220,6 +162,23 @@ export default function ItemTable({ title, value }: ItemTableProps) {
     await handleSubmit(e, `/api`, "POST");
   }
 
+  async function handleDeleteItem(itemID: string) {
+    try {
+      const response = await fetch(`/api/items/` + itemID, {
+        method: "DELETE",
+      });
+
+      if (response.ok) {
+        console.log("Success");
+        handleCloseModal();
+
+        setShouldRefetch(true);
+      }
+    } catch {
+      console.log("Failed");
+    }
+  }
+
   const listItems = items.map((item: ItemProps) => {
     return (
       <li
@@ -235,7 +194,10 @@ export default function ItemTable({ title, value }: ItemTableProps) {
           >
             <Pencil size={18} strokeWidth={1.2}></Pencil>
           </div>
-          <div className="group-hover:visible  invisible cursor-pointer">
+          <div
+            onClick={() => handleDeleteItem(item._id)}
+            className="group-hover:visible  invisible cursor-pointer"
+          >
             <Trash2 size={18} strokeWidth={1.2}></Trash2>
           </div>
         </div>
