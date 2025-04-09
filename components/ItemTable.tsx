@@ -185,8 +185,10 @@ export default function ItemTable({ title, value }: ItemTableProps) {
         key={item._id}
         className="group flex w-full px-2 py-2 justify-between"
       >
-        <p>{item.name}</p>
-        <p>{Number(item.amount).toLocaleString()}</p>
+        <p className="min-w-[120px]">{item.name}</p>
+        <p className="min-w-[60px] text-right">
+          {Number(item.amount).toLocaleString()}
+        </p>
         <div className=" flex gap-2">
           <div
             onClick={() => handleEditItemClick(item._id)}
