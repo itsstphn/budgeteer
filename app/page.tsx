@@ -5,8 +5,18 @@ import clientPromise from "@/lib/mongodb";
 import Image from "next/image";
 import WeekPicker from "./../components/WeekPicker";
 import FinancialSummary from "./../components/FinancialSummary";
+import { useSession } from "next-auth/react";
+import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+
+  console.log("session", session);
+  if (!session) {
+    redirect("/signin");
+  }
+
   return (
     <main className="container flex flex-row p-5 gap-7">
       <section className="w-[20%] max-h-full bg-primary p-5">

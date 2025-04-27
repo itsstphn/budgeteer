@@ -4,6 +4,7 @@ import "./globals.css";
 import NavBar from "@/components/NavBar";
 import { FormProvider } from "@/providers/FormContext";
 import { BudgetSummaryProvider } from "./../providers/BudgetSummaryContext";
+import SessionWrapper from "@/components/SessionWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,14 +20,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <FormProvider>
-        <BudgetSummaryProvider>
-          <body className={`${inter.className} bg-slate-50`}>
-            <NavBar></NavBar>
-            {children}
-          </body>
-        </BudgetSummaryProvider>
-      </FormProvider>
+      <SessionWrapper>
+        <FormProvider>
+          <BudgetSummaryProvider>
+            <body className={`${inter.className} bg-slate-50`}>
+              <NavBar></NavBar>
+              {children}
+            </body>
+          </BudgetSummaryProvider>
+        </FormProvider>
+      </SessionWrapper>
     </html>
   );
 }

@@ -48,8 +48,6 @@ export default function ItemTable({ title, value }: ItemTableProps) {
   const [isRecurring, setIsRecurring] = useState(false);
   const [shouldRefetch, setShouldRefetch] = useState(false);
 
-  console.log("shouldRefetch", shouldRefetch);
-
   useEffect(() => {
     async function fetchData() {
       try {
