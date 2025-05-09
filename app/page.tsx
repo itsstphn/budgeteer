@@ -5,7 +5,6 @@ import clientPromise from "@/lib/mongodb";
 import Image from "next/image";
 import WeekPicker from "./../components/WeekPicker";
 import FinancialSummary from "./../components/FinancialSummary";
-import { useSession } from "next-auth/react";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 

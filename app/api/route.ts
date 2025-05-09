@@ -1,8 +1,13 @@
 import clientPromise from "@/lib/mongodb";
+import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
+
+const secret = process.env.NEXTAUTH_SECRET;
 
 export async function GET(request: NextRequest) {
   try {
+    const token = await getToken({ req: request, secret });
+
     const client = await clientPromise;
 
     const db = client.db("budgeteer-dev");
@@ -18,6 +23,7 @@ export async function GET(request: NextRequest) {
       .collection("items")
       .find({
         type: type,
+        userId: token?.id,
         $or: [
           {
             "selectedPeriod.selectedMonth": month,
@@ -41,6 +47,8 @@ export async function GET(request: NextRequest) {
 
 export async function POST(request: NextRequest) {
   try {
+    const token = await getToken({ req: request, secret });
+
     const body = await request.json();
     console.log("body", body);
 
@@ -51,6 +59,7 @@ export async function POST(request: NextRequest) {
     const newItem = {
       ...body,
       created_at: new Date(),
+      userId: token?.id,
     };
 
     const result = await db.collection("items").insertOne(newItem);

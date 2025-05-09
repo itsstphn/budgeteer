@@ -1,11 +1,18 @@
 import clientPromise from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
+
+const secret = process.env.NEXTAUTH_SECRET;
 
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const token = await getToken({ req: request, secret });
+
+  console.log("token", token?.id);
+
   try {
     const client = await clientPromise;
     const db = client.db("budgeteer-dev");
@@ -27,7 +34,7 @@ export async function GET(
 
     const item = await db
       .collection("items")
-      .findOne({ _id: new ObjectId(id) });
+      .findOne({ _id: new ObjectId(id), userId: token?.id });
 
     return NextResponse.json(item);
   } catch (e) {
@@ -40,6 +47,8 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const token = await getToken({ req: request, secret });
+
   try {
     const client = await clientPromise;
     const db = client.db("budgeteer-dev");
@@ -50,7 +59,7 @@ export async function PUT(
 
     const result = await db
       .collection("items")
-      .updateOne({ _id: new ObjectId(id) }, { $set: body });
+      .updateOne({ _id: new ObjectId(id), userId: token?.id }, { $set: body });
 
     if (result.modifiedCount === 0) {
       return NextResponse.json(
@@ -73,6 +82,8 @@ export async function DELETE(
   request: NextRequest,
   { params }: { params: { id: string } }
 ) {
+  const token = await getToken({ req: request, secret });
+
   try {
     const client = await clientPromise;
     const db = client.db("budgeteer-dev");
@@ -80,7 +91,7 @@ export async function DELETE(
 
     const result = await db
       .collection("items")
-      .deleteOne({ _id: new ObjectId(id) });
+      .deleteOne({ _id: new ObjectId(id), userId: token?.id });
 
     if (result.deletedCount === 0) {
       return NextResponse.json(
