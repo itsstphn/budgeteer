@@ -8,6 +8,8 @@
 
 # testing
 /coverage
+**/*.test.*
+**/__tests__/
 
 # next.js
 /.next/
