@@ -33,7 +33,7 @@ interface ModalState {
   actionType: string | null;
 }
 
-type RecurringOption = "1st_half" | "2nd_half";
+type RecurringOption = "first_half" | "second_half";
 
 export default function ItemTable({ title, value }: ItemTableProps) {
   const { selectedMonth, selectedWeek } = useFormContext();
@@ -131,8 +131,8 @@ export default function ItemTable({ title, value }: ItemTableProps) {
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
 
-    delete data["1st_half"];
-    delete data["2nd_half"];
+    delete data["first_half"];
+    delete data["second_half"];
     console.log("handleSubmit clicked");
 
     console.log("data", data);

@@ -3,12 +3,14 @@
 import _ from "lodash";
 import { useEffect, useState } from "react";
 
+type RecurringOption = "first_half" | "second_half";
+
 interface FormAddItemProps {
   value: string;
   handleCloseModal: () => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  setRecurring: (value: string[]) => void;
-  recurring: string[];
+  setRecurring: (value: RecurringOption[]) => void;
+  recurring: RecurringOption[];
 }
 
 export function FormAddItem({
