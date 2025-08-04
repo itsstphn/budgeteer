@@ -33,6 +33,8 @@ interface ModalState {
   actionType: string | null;
 }
 
+type RecurringOption = "1st_half" | "2nd_half";
+
 export default function ItemTable({ title, value }: ItemTableProps) {
   const { selectedMonth, selectedWeek } = useFormContext();
   const { setBudgetSummary } = useBudgetSummaryContext();
@@ -45,8 +47,10 @@ export default function ItemTable({ title, value }: ItemTableProps) {
   const [editItemID, setEditItemID] = useState<string | null>(null);
   const [items, setItems] = useState([]);
   const [targetType, setTargetType] = useState<string | null>(null);
-  const [isRecurring, setIsRecurring] = useState(false);
+  const [recurring, setRecurring] = useState<RecurringOption[]>([]);
   const [shouldRefetch, setShouldRefetch] = useState(false);
+
+  (isAddModalOpen || isEditModalOpen) && console.log("recurring", recurring);
 
   useEffect(() => {
     async function fetchData() {
@@ -115,6 +119,7 @@ export default function ItemTable({ title, value }: ItemTableProps) {
     setIsAddModalOpen(false);
     setIsEditModalOpen(false);
     setEditItemID(null);
+    setRecurring([]);
   }, []);
 
   async function handleSubmit(
@@ -125,7 +130,12 @@ export default function ItemTable({ title, value }: ItemTableProps) {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const data = Object.fromEntries(formData.entries());
+
+    delete data["1st_half"];
+    delete data["2nd_half"];
     console.log("handleSubmit clicked");
+
+    console.log("data", data);
 
     try {
       console.log("fetching");
@@ -137,6 +147,7 @@ export default function ItemTable({ title, value }: ItemTableProps) {
         body: JSON.stringify({
           ...data,
           type: value,
+          recurring: recurring,
           selectedPeriod: { selectedMonth, selectedWeek },
         }),
       });
@@ -224,8 +235,8 @@ export default function ItemTable({ title, value }: ItemTableProps) {
           value={value}
           handleCloseModal={handleCloseModal}
           handleSubmit={handleAddSubmit}
-          setIsRecurring={setIsRecurring}
-          isRecurring={isRecurring}
+          setRecurring={setRecurring}
+          recurring={recurring}
         ></FormAddItem>
       </Modal>
       <Modal
@@ -238,8 +249,8 @@ export default function ItemTable({ title, value }: ItemTableProps) {
           value={value}
           handleCloseModal={handleCloseModal}
           handleSubmit={handleEditSubmit}
-          setIsRecurring={setIsRecurring}
-          isRecurring={isRecurring}
+          setRecurring={setRecurring}
+          recurring={recurring}
         ></FormEditItem>
       </Modal>
     </div>

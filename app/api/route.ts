@@ -30,13 +30,11 @@ export async function GET(request: NextRequest) {
             "selectedPeriod.selectedWeek": week,
           },
           {
-            recurring: "on",
+            recurring: week,
           },
         ],
       })
       .toArray();
-
-    console.log("items", items);
 
     return NextResponse.json(items);
   } catch (e) {

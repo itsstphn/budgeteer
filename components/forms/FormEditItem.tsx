@@ -8,23 +8,22 @@ interface FormEditItemProps {
   value: string;
   handleCloseModal: () => void;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  setIsRecurring: (value: boolean) => void;
-  isRecurring: boolean;
+  setRecurring: (value: string[]) => void;
+  recurring: string[];
 }
 
 export function FormEditItem({
   value,
   handleCloseModal,
   handleSubmit,
-  setIsRecurring,
-  isRecurring,
+  setRecurring,
+  recurring,
   itemID,
 }: FormEditItemProps) {
   console.log("clicked itemID", itemID);
 
   const [name, setName] = useState("");
   const [amount, setAmount] = useState(0);
-  const [recurring, setRecurring] = useState(false);
 
   const [itemData, setItemData] = useState(null);
 
@@ -37,20 +36,20 @@ export function FormEditItem({
           setItemData(data);
           setName(data.name);
           setAmount(+data.amount);
-          setRecurring(data.recurring);
+          setRecurring(data.recurring || []);
         } catch (error) {
           console.error("Failed to fetch item data", error);
         }
       } else {
         setName("");
         setAmount(0);
-        setRecurring(false);
+        setRecurring([]);
         setItemData(null);
       }
     }
 
     fetchItemData();
-  }, [itemID]);
+  }, [itemID, setRecurring]);
 
   console.log("cliecked itemData", itemData);
 
@@ -88,17 +87,44 @@ export function FormEditItem({
             name="amount"
           />
         </div>
-        <label className="w-fit" htmlFor="recurring">
-          <input
-            checked={recurring}
-            className="mx-2"
-            type="checkbox"
-            id="recurring"
-            name="recurring"
-            onChange={() => setIsRecurring(!isRecurring)}
-          />
-          Recurring
-        </label>
+        <div className="flex flex-col gap-1">
+          <p>Recurring:</p>
+          <label className="w-fit" htmlFor="first_half">
+            <input
+              checked={recurring.includes("first_half")}
+              className="mx-2"
+              type="checkbox"
+              id="first_half"
+              name="first_half"
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setRecurring([...recurring, "first_half"]);
+                } else {
+                  setRecurring(recurring.filter((r) => r !== "first_half"));
+                }
+              }}
+            />
+            1st-2nd week
+          </label>
+          <label className="w-fit" htmlFor="second_half">
+            <input
+              checked={recurring.includes("second_half")}
+              className="mx-2"
+              type="checkbox"
+              id="second_half"
+              name="second_half"
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setRecurring([...recurring, "second_half"]);
+                } else {
+                  setRecurring(recurring.filter((r) => r !== "second_half"));
+                }
+              }}
+            />
+            3rd-4th week
+          </label>
+        </div>
+
         {/* {isRecurring && (
             <div>
               <label htmlFor="recurringEvery">Every: </label>
