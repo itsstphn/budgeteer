@@ -8,7 +8,7 @@ export default function NavBar() {
   const name = session?.user?.name || "Guest";
 
   return (
-    <nav className="bg-primary">
+    <nav className="bg-[var(--bg-color)] border-b-2 border-[var(--primary-color)]">
       <div className="container h-[60px] flex items-center justify-between">
         <div>
           <h1 className="font-bold">Budgeteer</h1>
@@ -18,7 +18,7 @@ export default function NavBar() {
             <>
               <div>Welcome, {name}</div>
               <button
-                className="border-2 p-1 border-black border-dashed"
+                className="border-2 p-1 border-[var(--primary-color)] border-dashed"
                 onClick={() => signOut({ callbackUrl: "/signin" })}
               >
                 Sign Out

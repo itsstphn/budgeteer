@@ -14,7 +14,7 @@ export default function Modal({
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white p-5">{children}</div>
+      <div className="bg-[var(--primary-color)] p-5">{children}</div>
     </div>
   );
 }

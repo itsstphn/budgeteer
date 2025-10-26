@@ -219,7 +219,7 @@ export default function ItemTable({ title, value }: ItemTableProps) {
   return (
     <div className="flex-1 w-full p-2 flex flex-col items-center">
       <p className="mb-3">{title}</p>
-      <ul className="w-full flex gap-2 flex-col items-center p-4 border-2 border-slate-900 min-h-[400px]">
+      <ul className="w-full flex gap-2 flex-col items-center p-4 border-2 border-slate-500 rounded min-h-[400px]">
         {listItems}
         <Button
           action={() => handleAddItemClick(title)}

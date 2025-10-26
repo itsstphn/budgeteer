@@ -23,7 +23,9 @@ export default function RootLayout({
       <SessionWrapper>
         <FormProvider>
           <BudgetSummaryProvider>
-            <body className={`${inter.className} bg-slate-50`}>
+            <body
+              className={`${inter.className} bg-[var(--bg-color)] text-white`}
+            >
               <NavBar></NavBar>
               {children}
             </body>

@@ -28,7 +28,7 @@ export default function FinancialSummary() {
           <p>Projected Money Left:</p>
         </div>
       </div>
-      <div className="bg-slate-400 p-2 min-w-[150px]">
+      <div className="bg-[var(--primary-color)] rounded p-2 min-w-[150px]">
         <div className="">
           <p className="text-right">{funds.toLocaleString()}</p>
         </div>

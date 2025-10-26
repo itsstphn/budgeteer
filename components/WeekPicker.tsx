@@ -18,7 +18,7 @@ export default function WeekPicker() {
   };
 
   return (
-    <div className="bg-primary w-fit p-2">
+    <div className="bg-[var(--primary-color)] rounded w-fit p-2">
       <p>Week</p>
       <form action="">
         <label htmlFor=""></label>
@@ -27,6 +27,7 @@ export default function WeekPicker() {
           onChange={handleChange}
           name="week"
           id="week"
+          className="text-[var(--primary-color)]"
         >
           <option value="first_half">1st-2nd</option>
           <option value="second_half">3rd-4th</option>

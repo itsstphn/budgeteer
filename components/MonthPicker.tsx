@@ -17,7 +17,7 @@ export default function MonthPicker() {
   };
 
   return (
-    <div className="bg-primary min-w-[121px] w-fit p-2">
+    <div className="bg-[var(--primary-color)] min-w-[121px] rounded w-fit p-2">
       <p>Month</p>
       <form action="">
         <label htmlFor=""></label>
@@ -27,6 +27,7 @@ export default function MonthPicker() {
             onChange={handleChange}
             name="month"
             id="month"
+            className="text-[var(--bg-color)]"
           >
             <option value="jan">January</option>
             <option value="feb">February</option>
