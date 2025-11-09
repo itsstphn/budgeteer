@@ -70,7 +70,7 @@ export function FormEditItem({
           <input
             value={name}
             onChange={(e) => setName(e.target.value)}
-            className="border-2 px-1"
+            className="border-2 px-1 text-[var(--bg-color)]"
             type="text"
             id="name"
             name="name"
@@ -83,7 +83,7 @@ export function FormEditItem({
           <input
             value={amount}
             onChange={(e) => setAmount(+e.target.value)}
-            className="border-2 px-1"
+            className="border-2 px-1 text-[var(--bg-color)]"
             type="number"
             id="amount"
             name="amount"
